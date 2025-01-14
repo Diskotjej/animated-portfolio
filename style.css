@@ -65,11 +65,9 @@ body {
 
 /* Floating images for the collage */
 .floating-image {
-.floating-image {
-  object-fit: contain; /* Ensures the entire image is visible */
-  object-position: center; /* Center-align the image within its container */
-  position: absolute; /* Keep existing positioning */
-  display: block; /* Prevent inline styling issues */
+  position: absolute;
+  object-fit: contain; /* Ensure aspect ratio is preserved */
+  display: block;
 }
 
    

@@ -84,10 +84,10 @@ function initializeAnimation() {
 // 5) CREATE & ANIMATE A ROW
 //------------------------------------------------
 function createRandomRow() {
-  const pattern   = patterns[Math.floor(Math.random() * patterns.length)];
+  const pattern = patterns[Math.floor(Math.random() * patterns.length)];
   const container = document.getElementById('floating-container');
 
-  let maxHeight = 0; // track max height in this row
+  let maxHeight = 0; // Track max height in this row
 
   pattern.sizeKeys.forEach((sizeKey, i) => {
     if (images.length === 0) {
@@ -102,37 +102,47 @@ function createRandomRow() {
       maxHeight = height;
     }
 
-    // create the img element
+    // Create the img element
     const imgEl = document.createElement('img');
     imgEl.classList.add('floating-image');
     imgEl.src = `${folderPath}${encodeURIComponent(imageName)}`;
 
-    // size in vw/vh
-    imgEl.style.width  = `${width}vw`;
-    imgEl.style.height = `${height}vh`;
+    // Ensure the image is not cropped
+    imgEl.onload = () => {
+      const aspectRatio = imgEl.naturalWidth / imgEl.naturalHeight;
+      if (aspectRatio > 1) {
+        // Landscape: Constrain by width
+        imgEl.style.width = `${width}vw`;
+        imgEl.style.height = `auto`;
+      } else {
+        // Portrait or square: Constrain by height
+        imgEl.style.width = `auto`;
+        imgEl.style.height = `${height}vh`;
+      }
+    };
 
-    // horizontal position
+    // Horizontal position
     const xPos = pattern.xPositions[i];
     imgEl.style.left = `${xPos}vw`;
 
-    // vertical spawn
+    // Vertical spawn
     const spawnY = 100 + currentOffset;
     imgEl.style.top = `${spawnY}vh`;
 
     container.appendChild(imgEl);
 
-    // animate upward
+    // Animate upward
     const totalDistance = spawnY + height;
-    const duration      = totalDistance / scrollSpeed;
+    const duration = totalDistance / scrollSpeed;
     gsap.to(imgEl, {
       y: `-=${totalDistance}vh`,
       duration,
-      ease: 'linear'
+      ease: 'linear',
     });
   });
 
-  // move offset for next row
-  currentOffset += (maxHeight + verticalGap);
+  // Move offset for the next row
+  currentOffset += maxHeight + verticalGap;
 }
 
 //------------------------------------------------

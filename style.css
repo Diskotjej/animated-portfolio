@@ -66,10 +66,9 @@ body {
 /* Floating images for the collage */
 .floating-image {
   position: absolute;
-  object-fit: contain; /* Ensure aspect ratio is preserved */
+  object-fit: cover; /* Allow slight cropping for better fit */
   display: block;
 }
-
    
 /* Overlay for zooming a clicked image */
 #zoom-overlay {

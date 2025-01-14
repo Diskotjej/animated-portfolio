@@ -60,7 +60,7 @@ const patterns = [
 //------------------------------------------------
 
 const scrollSpeed   = 18;   // vh/s
-const spawnInterval = 900; // every 0.9s, spawn a new row
+const spawnInterval = 900; // every 2s, spawn a new row
 let currentOffset   = 0;    // in vh
 const verticalGap   = 4;    // gap between rows
 
@@ -73,7 +73,7 @@ function initializeAnimation() {
     createRandomRow();
   }, spawnInterval);
 
-  // freeze on scroll (0.7s)
+  // freeze on scroll (1s)
   attachScrollFreeze(700);
 
   // attach logic for zooming images
@@ -161,15 +161,21 @@ function attachScrollFreeze(delayMs) {
 // 7) IMAGE ZOOM ON CLICK
 //------------------------------------------------
 function attachImageZoomLogic() {
+  // Listen globally for clicks on ".floating-image"
   document.addEventListener('click', (evt) => {
     const target = evt.target;
+
+    // If we clicked a floating image, zoom
     if (target.classList.contains('floating-image')) {
       showZoom(target);
     }
   });
 
+  // Also handle clicks on the overlay => close zoom
   const overlay = document.getElementById('zoom-overlay');
   overlay.addEventListener('click', (evt) => {
+    // If user clicked the overlay or its child, only close if
+    // it's NOT the zoomed image itself. So check target vs. currentTarget.
     if (evt.target.id === 'zoom-overlay') {
       hideZoom();
     }
@@ -179,14 +185,22 @@ function attachImageZoomLogic() {
 function showZoom(originalImg) {
   const overlay = document.getElementById('zoom-overlay');
   const zoomedImage = document.getElementById('zoomed-image');
+
+  // Clone the src from the clicked image
   zoomedImage.src = originalImg.src;
+
+  // Show overlay
   overlay.style.display = 'flex';
+
+  // Slow animation to half speed => 2x slower
   gsap.globalTimeline.timeScale(0.5);
 }
 
 function hideZoom() {
   const overlay = document.getElementById('zoom-overlay');
   overlay.style.display = 'none';
+
+  // Restore normal speed
   gsap.globalTimeline.timeScale(1);
 }
 

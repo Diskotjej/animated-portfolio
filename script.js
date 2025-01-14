@@ -28,6 +28,7 @@ let images = [
   "images_photo4(1).jpg", "images_photo4.jpg", "images_photo6.jpg", "images_photo7.jpg"
 ];
 
+// Make a deep copy for backup
 let imagesBackup = [...images];
 
 //------------------------------------------------
@@ -59,10 +60,10 @@ const patterns = [
 // 3) ANIMATION CONFIG
 //------------------------------------------------
 
-const scrollSpeed   = 18;   // vh/s
-const spawnInterval = 900; // every 2s, spawn a new row
+const scrollSpeed   = 12;   // vh/s
+const spawnInterval = 2000; // every 2s, spawn a new row
 let currentOffset   = 0;    // in vh
-const verticalGap   = 4;    // gap between rows
+const verticalGap   = 5;    // gap between rows
 
 //------------------------------------------------
 // 4) INITIALIZE
@@ -74,7 +75,7 @@ function initializeAnimation() {
   }, spawnInterval);
 
   // freeze on scroll (1s)
-  attachScrollFreeze(700);
+  attachScrollFreeze(1000);
 
   // attach logic for zooming images
   attachImageZoomLogic();
@@ -209,5 +210,4 @@ function hideZoom() {
 // 8) START
 //------------------------------------------------
 document.addEventListener('DOMContentLoaded', initializeAnimation);
-
 

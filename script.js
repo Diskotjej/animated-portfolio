@@ -2,7 +2,7 @@
 // 1) CONFIG: Path, Images, etc.
 //------------------------------------------------
 
-const folderPath = '/Users/kami/Desktop/animated - portfolio/image folder/';
+const folderPath = './image folder/';
 
 let images = [
   "IMG_0823.jpg", "IMG_0832.jpg", "IMG_1092.jpg", "IMG_1160.jpg",

@@ -41,10 +41,10 @@ const patterns = [
 // 3) ANIMATION CONFIG
 //------------------------------------------------
 
-const scrollSpeed   = 18;   // vh/s
-const spawnInterval = 900; // every 2s, spawn a new row
+const scrollSpeed   = 12;   // vh/s
+const spawnInterval = 2000; // every 2s, spawn a new row
 let currentOffset   = 0;    // in vh
-const verticalGap   = 4;    // gap between rows
+const verticalGap   = 5;    // gap between rows
 
 //------------------------------------------------
 // 4) INITIALIZE
@@ -56,7 +56,7 @@ function initializeAnimation() {
   }, spawnInterval);
 
   // freeze on scroll (1s)
-  attachScrollFreeze(700);
+  attachScrollFreeze(1000);
 
   // attach logic for zooming images
   attachImageZoomLogic();
@@ -166,4 +166,28 @@ function attachImageZoomLogic() {
 }
 
 function showZoom(originalImg) {
-  const overlay = document.getElementById('zoom-overla
+  const overlay = document.getElementById('zoom-overlay');
+  const zoomedImage = document.getElementById('zoomed-image');
+
+  // Clone the src from the clicked image
+  zoomedImage.src = originalImg.src;
+
+  // Show overlay
+  overlay.style.display = 'flex';
+
+  // Slow animation to half speed => 2x slower
+  gsap.globalTimeline.timeScale(0.5);
+}
+
+function hideZoom() {
+  const overlay = document.getElementById('zoom-overlay');
+  overlay.style.display = 'none';
+
+  // Restore normal speed
+  gsap.globalTimeline.timeScale(1);
+}
+
+//------------------------------------------------
+// 8) START
+//------------------------------------------------
+document.addEventListener('DOMContentLoaded', initializeAnimation);

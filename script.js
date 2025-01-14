@@ -35,9 +35,9 @@ let imagesBackup = [...images];
 //------------------------------------------------
 
 const sizes = {
-  small:  { width: 15, height: 15 },
-  medium: { width: 30, height: 30 },
-  large:  { width: 55, height: 55 }
+  small:  { width: 25, height: 25 }, // Increased sizes
+  medium: { width: 40, height: 40 },
+  large:  { width: 65, height: 65 }
 };
 
 const patterns = [
@@ -101,7 +101,7 @@ function createRandomRow() {
     const imgEl = document.createElement('img');
     imgEl.classList.add('floating-image');
     imgEl.src = `${folderPath}${encodeURIComponent(imageName)}`;
-    imgEl.style.objectFit = 'contain'; // Preserve aspect ratio
+    imgEl.style.objectFit = 'cover'; // Allow slight cropping
     imgEl.style.width = `${width}vw`;
     imgEl.style.height = `${height}vh`;
 

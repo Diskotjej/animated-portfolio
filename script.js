@@ -35,23 +35,23 @@ let imagesBackup = [...images];
 //------------------------------------------------
 
 const sizes = {
-  small:  { width: 20, height: 20 },
-  medium: { width: 35, height: 35 },
-  large:  { width: 50, height: 50 }
+  small:  { width: 15, height: 15 },
+  medium: { width: 30, height: 30 },
+  large:  { width: 55, height: 55 }
 };
 
 const patterns = [
   {
     sizeKeys: ["large"],
-    xPositions: [ (100 - sizes.large.width) / 2 ] // Center large images
+    xPositions: [ (100 - sizes.large.width) / 2 ] // ~22.5 for centering
   },
   {
     sizeKeys: ["medium", "medium"],
-    xPositions: [5, 55] // Two medium images side by side
+    xPositions: [5, 55]
   },
   {
     sizeKeys: ["small", "small", "small"],
-    xPositions: [5, 30, 55] // Three small images across
+    xPositions: [5, 30, 55]
   },
 ];
 
@@ -59,10 +59,10 @@ const patterns = [
 // 3) ANIMATION CONFIG
 //------------------------------------------------
 
-const scrollSpeed   = 20;   // vh/s
-const spawnInterval = 1000; // Every 1 second
+const scrollSpeed   = 18;   // vh/s
+const spawnInterval = 700; // every 0.9s, spawn a new row
 let currentOffset   = 0;    // in vh
-const verticalGap   = 8;    // Increased gap between rows
+const verticalGap   = 5;    // gap between rows
 
 //------------------------------------------------
 // 4) INITIALIZE
@@ -73,7 +73,7 @@ function initializeAnimation() {
     createRandomRow();
   }, spawnInterval);
 
-  attachScrollFreeze(1000);
+  attachScrollFreeze(700);
   attachImageZoomLogic();
 }
 
@@ -104,25 +104,19 @@ function createRandomRow() {
     imgEl.classList.add('floating-image');
     imgEl.src = `${folderPath}${encodeURIComponent(imageName)}`;
 
-    imgEl.onload = () => {
-      const aspectRatio = imgEl.naturalWidth / imgEl.naturalHeight;
+    imgEl.style.objectFit = 'cover'; // Prevent cropping by fitting the image
+    imgEl.style.width = `${width}vw`;
+    imgEl.style.height = `${height}vh`;
 
-      // Adjust image to fit its space while maintaining aspect ratio
-      if (aspectRatio > 1) {
-        imgEl.style.width = `${width}vw`;
-        imgEl.style.height = `auto`;
-      } else {
-        imgEl.style.width = `auto`;
-        imgEl.style.height = `${height}vh`;
-      }
-    };
+    const xPos = pattern.xPositions[i];
+    imgEl.style.left = `${xPos}vw`;
 
-    imgEl.style.left = `${pattern.xPositions[i]}vw`;
-    imgEl.style.top = `${100 + currentOffset}vh`;
+    const spawnY = 100 + currentOffset;
+    imgEl.style.top = `${spawnY}vh`;
 
     container.appendChild(imgEl);
 
-    const totalDistance = 100 + currentOffset + height;
+    const totalDistance = spawnY + height;
     const duration = totalDistance / scrollSpeed;
     gsap.to(imgEl, {
       y: `-=${totalDistance}vh`,
@@ -155,7 +149,7 @@ function attachScrollFreeze(delayMs) {
 }
 
 //------------------------------------------------
-// 7) IMAGE ZOOM
+// 7) IMAGE ZOOM ON CLICK
 //------------------------------------------------
 
 function attachImageZoomLogic() {

@@ -60,32 +60,34 @@ const patterns = [
 //------------------------------------------------
 
 const scrollSpeed   = 18;   // vh/s
-const spawnInterval = 700; // every 0.9s, spawn a new row
+const spawnInterval = 900; // every 0.9s, spawn a new row
 let currentOffset   = 0;    // in vh
-const verticalGap   = 5;    // gap between rows
+const verticalGap   = 4;    // gap between rows
 
 //------------------------------------------------
 // 4) INITIALIZE
 //------------------------------------------------
-
 function initializeAnimation() {
+  // spawn a new row every [spawnInterval]
   setInterval(() => {
     createRandomRow();
   }, spawnInterval);
 
+  // freeze on scroll (0.7s)
   attachScrollFreeze(700);
+
+  // attach logic for zooming images
   attachImageZoomLogic();
 }
 
 //------------------------------------------------
 // 5) CREATE & ANIMATE A ROW
 //------------------------------------------------
-
 function createRandomRow() {
-  const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+  const pattern   = patterns[Math.floor(Math.random() * patterns.length)];
   const container = document.getElementById('floating-container');
 
-  let maxHeight = 0;
+  let maxHeight = 0; // track max height in this row
 
   pattern.sizeKeys.forEach((sizeKey, i) => {
     if (images.length === 0) {
@@ -100,48 +102,55 @@ function createRandomRow() {
       maxHeight = height;
     }
 
+    // create the img element
     const imgEl = document.createElement('img');
     imgEl.classList.add('floating-image');
     imgEl.src = `${folderPath}${encodeURIComponent(imageName)}`;
 
-    imgEl.style.objectFit = 'cover'; // Prevent cropping by fitting the image
-    imgEl.style.width = `${width}vw`;
+    // size in vw/vh
+    imgEl.style.width  = `${width}vw`;
     imgEl.style.height = `${height}vh`;
 
+    // horizontal position
     const xPos = pattern.xPositions[i];
     imgEl.style.left = `${xPos}vw`;
 
+    // vertical spawn
     const spawnY = 100 + currentOffset;
     imgEl.style.top = `${spawnY}vh`;
 
     container.appendChild(imgEl);
 
+    // animate upward
     const totalDistance = spawnY + height;
-    const duration = totalDistance / scrollSpeed;
+    const duration      = totalDistance / scrollSpeed;
     gsap.to(imgEl, {
       y: `-=${totalDistance}vh`,
       duration,
-      ease: 'linear',
+      ease: 'linear'
     });
   });
 
-  currentOffset += maxHeight + verticalGap;
+  // move offset for next row
+  currentOffset += (maxHeight + verticalGap);
 }
 
 //------------------------------------------------
-// 6) SCROLL FREEZE
+// 6) SCROLL FREEZE (with custom delayMs param)
 //------------------------------------------------
-
 function attachScrollFreeze(delayMs) {
   let scrollTimeout = null;
 
   window.addEventListener('scroll', () => {
+    // Pause all GSAP animations immediately
     gsap.globalTimeline.pause();
 
+    // Reset timer if user keeps scrolling
     if (scrollTimeout) {
       clearTimeout(scrollTimeout);
     }
 
+    // After [delayMs] with no scroll, resume
     scrollTimeout = setTimeout(() => {
       gsap.globalTimeline.resume();
     }, delayMs);
@@ -151,7 +160,6 @@ function attachScrollFreeze(delayMs) {
 //------------------------------------------------
 // 7) IMAGE ZOOM ON CLICK
 //------------------------------------------------
-
 function attachImageZoomLogic() {
   document.addEventListener('click', (evt) => {
     const target = evt.target;
@@ -185,5 +193,5 @@ function hideZoom() {
 //------------------------------------------------
 // 8) START
 //------------------------------------------------
-
 document.addEventListener('DOMContentLoaded', initializeAnimation);
+

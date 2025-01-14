@@ -43,7 +43,7 @@ const sizes = {
 const patterns = [
   {
     sizeKeys: ["large"],
-    xPositions: [ (100 - sizes.large.width) / 2 ]
+    xPositions: [ (100 - sizes.large.width) / 2 ] // ~22.5 for centering
   },
   {
     sizeKeys: ["medium", "medium"],
@@ -59,20 +59,24 @@ const patterns = [
 // 3) ANIMATION CONFIG
 //------------------------------------------------
 
-const scrollSpeed   = 12;
-const spawnInterval = 2000;
-let currentOffset   = 0;
-const verticalGap   = 5;
+const scrollSpeed   = 18;   // vh/s
+const spawnInterval = 900; // every 0.9s, spawn a new row
+let currentOffset   = 0;    // in vh
+const verticalGap   = 4;    // gap between rows
 
 //------------------------------------------------
 // 4) INITIALIZE
 //------------------------------------------------
 function initializeAnimation() {
+  // spawn a new row every [spawnInterval]
   setInterval(() => {
     createRandomRow();
   }, spawnInterval);
 
-  attachScrollFreeze(1000);
+  // freeze on scroll (0.7s)
+  attachScrollFreeze(700);
+
+  // attach logic for zooming images
   attachImageZoomLogic();
 }
 
@@ -83,7 +87,7 @@ function createRandomRow() {
   const pattern   = patterns[Math.floor(Math.random() * patterns.length)];
   const container = document.getElementById('floating-container');
 
-  let maxHeight = 0;
+  let maxHeight = 0; // track max height in this row
 
   pattern.sizeKeys.forEach((sizeKey, i) => {
     if (images.length === 0) {
@@ -98,20 +102,26 @@ function createRandomRow() {
       maxHeight = height;
     }
 
+    // create the img element
     const imgEl = document.createElement('img');
     imgEl.classList.add('floating-image');
     imgEl.src = `${folderPath}${encodeURIComponent(imageName)}`;
+
+    // size in vw/vh
     imgEl.style.width  = `${width}vw`;
     imgEl.style.height = `${height}vh`;
 
+    // horizontal position
     const xPos = pattern.xPositions[i];
     imgEl.style.left = `${xPos}vw`;
 
+    // vertical spawn
     const spawnY = 100 + currentOffset;
     imgEl.style.top = `${spawnY}vh`;
 
     container.appendChild(imgEl);
 
+    // animate upward
     const totalDistance = spawnY + height;
     const duration      = totalDistance / scrollSpeed;
     gsap.to(imgEl, {
@@ -121,6 +131,7 @@ function createRandomRow() {
     });
   });
 
+  // move offset for next row
   currentOffset += (maxHeight + verticalGap);
 }
 
@@ -131,12 +142,15 @@ function attachScrollFreeze(delayMs) {
   let scrollTimeout = null;
 
   window.addEventListener('scroll', () => {
+    // Pause all GSAP animations immediately
     gsap.globalTimeline.pause();
 
+    // Reset timer if user keeps scrolling
     if (scrollTimeout) {
       clearTimeout(scrollTimeout);
     }
 
+    // After [delayMs] with no scroll, resume
     scrollTimeout = setTimeout(() => {
       gsap.globalTimeline.resume();
     }, delayMs);
@@ -149,7 +163,6 @@ function attachScrollFreeze(delayMs) {
 function attachImageZoomLogic() {
   document.addEventListener('click', (evt) => {
     const target = evt.target;
-
     if (target.classList.contains('floating-image')) {
       showZoom(target);
     }
@@ -166,18 +179,14 @@ function attachImageZoomLogic() {
 function showZoom(originalImg) {
   const overlay = document.getElementById('zoom-overlay');
   const zoomedImage = document.getElementById('zoomed-image');
-
   zoomedImage.src = originalImg.src;
-
   overlay.style.display = 'flex';
-
   gsap.globalTimeline.timeScale(0.5);
 }
 
 function hideZoom() {
   const overlay = document.getElementById('zoom-overlay');
   overlay.style.display = 'none';
-
   gsap.globalTimeline.timeScale(1);
 }
 
@@ -185,3 +194,4 @@ function hideZoom() {
 // 8) START
 //------------------------------------------------
 document.addEventListener('DOMContentLoaded', initializeAnimation);
+

@@ -2,16 +2,144 @@
    1) GLOBAL RESET / DEFAULTS
 ========================================= */
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  body {
-    font-family: sans-serif;
-    color: #fff;
-    background: #000;
-  }
-  
-  /* =========================================
-     2)
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  color: #fff;
+  background: #000;
+}
+
+/* =========================================
+   2) INDEX.HTML (Collage / Front Page)
+========================================= */
+
+/* Main header at the top: left side = site title, right side = links */
+#main-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* pushes site-title left, nav right */
+  padding: 15px 30px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  /* optional translucent background behind header */
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* Site title on the left */
+#site-title {
+  font-size: 17px;
+  font-weight: 300; /* skinny text */
+  margin: 0;
+}
+
+/* The nav on the right side of the header */
+#header-nav {
+  display: flex;
+  gap: 20px; /* spacing between possible future links */
+}
+
+/* The “About” link in the header (right side) */
+#about-link {
+  color: #fff;               /* no blue default link color */
+  text-decoration: none;     /* remove underline */
+  font-weight: 300;          /* keep it light */
+  cursor: pointer;
+}
+#about-link:hover {
+  text-decoration: underline; /* show underline on hover */
+}
+
+/* The collage container (where floating images go) */
+#floating-container {
+  position: relative;
+  width: 100vw;
+  min-height: 2000vh; /* enough space to scroll */
+}
+
+/* Floating images for the collage */
+.floating-image {
+  object-fit: cover;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 3px;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+}
+
+/* Overlay for zooming a clicked image */
+#zoom-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.7);
+  display: flex;              /* center the image horizontally/vertically */
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  /* hidden by default (style="display: none;" in HTML) */
+}
+#zoomed-image {
+  max-width: 80vw;
+  max-height: 80vh;
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+/* =========================================
+   3) ABOUT.HTML (About Page)
+========================================= */
+
+/* 
+   We label the <body> in about.html as id="about-page".
+   This allows us to style it specifically for the about page.
+*/
+#about-page {
+  display: flex;
+  flex-direction: column;
+  background: #000;   /* black background */
+  min-height: 100vh;  /* fill the viewport vertically */
+  align-items: center;     /* center horizontally */
+  justify-content: center; /* center vertically */
+}
+
+/* “Home” link at top-left to return to index.html */
+#home-return {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 300;
+}
+#home-return:hover {
+  text-decoration: underline;
+}
+
+/* The container that holds your about text in the center */
+#about-content {
+  max-width: 600px;  /* limit line width for readability */
+  text-align: center;/* horizontally center the text */
+  line-height: 1.6;
+  font-size: 18px;   /* you can adjust if you want smaller or bigger text */
+  font-weight: 300;  /* makes the text lighter (less bold) */
+  margin: 0 20px;    /* small horizontal margin for spacing */
+}
+
+/*
+   If you choose to use multiple <p> tags instead of <br>, 
+   you can style them individually:
+   
+   #about-content p {
+     margin-bottom: 1rem; 
+   }
+*/

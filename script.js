@@ -105,7 +105,7 @@ function createRandomRow() {
     // create the img element
     const imgEl = document.createElement('img');
     imgEl.classList.add('floating-image');
-    imgEl.src = `${folderPath}${encodeURIComponent(imageName)}`;
+    imgEl.src = `${folderPath}${imageName}`;
 
     // size in vw/vh
     imgEl.style.width  = `${width}vw`;
@@ -128,6 +128,7 @@ function createRandomRow() {
       y: `-=${totalDistance}vh`,
       duration,
       ease: 'linear'
+      // no onComplete remove => remains in DOM
     });
   });
 
@@ -208,4 +209,5 @@ function hideZoom() {
 // 8) START
 //------------------------------------------------
 document.addEventListener('DOMContentLoaded', initializeAnimation);
+
 

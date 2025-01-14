@@ -2,7 +2,7 @@
 // 1) CONFIG: Path, Images, etc.
 //------------------------------------------------
 
-const folderPath = './image folder/';
+const folderPath = './image%20folder/';
 
 let images = [
   "IMG_0823.jpg", "IMG_0832.jpg", "IMG_1092.jpg", "IMG_1160.jpg", "IMG_1164.jpg",
@@ -43,7 +43,7 @@ const sizes = {
 const patterns = [
   {
     sizeKeys: ["large"],
-    xPositions: [ (100 - sizes.large.width) / 2 ] // ~22.5 for centering
+    xPositions: [ (100 - sizes.large.width) / 2 ]
   },
   {
     sizeKeys: ["medium", "medium"],
@@ -59,24 +59,20 @@ const patterns = [
 // 3) ANIMATION CONFIG
 //------------------------------------------------
 
-const scrollSpeed   = 12;   // vh/s
-const spawnInterval = 2000; // every 2s, spawn a new row
-let currentOffset   = 0;    // in vh
-const verticalGap   = 5;    // gap between rows
+const scrollSpeed   = 12;
+const spawnInterval = 2000;
+let currentOffset   = 0;
+const verticalGap   = 5;
 
 //------------------------------------------------
 // 4) INITIALIZE
 //------------------------------------------------
 function initializeAnimation() {
-  // spawn a new row every [spawnInterval]
   setInterval(() => {
     createRandomRow();
   }, spawnInterval);
 
-  // freeze on scroll (1s)
   attachScrollFreeze(1000);
-
-  // attach logic for zooming images
   attachImageZoomLogic();
 }
 
@@ -87,7 +83,7 @@ function createRandomRow() {
   const pattern   = patterns[Math.floor(Math.random() * patterns.length)];
   const container = document.getElementById('floating-container');
 
-  let maxHeight = 0; // track max height in this row
+  let maxHeight = 0;
 
   pattern.sizeKeys.forEach((sizeKey, i) => {
     if (images.length === 0) {
@@ -102,37 +98,29 @@ function createRandomRow() {
       maxHeight = height;
     }
 
-    // create the img element
     const imgEl = document.createElement('img');
     imgEl.classList.add('floating-image');
-    imgEl.src = `${folderPath}${imageName}`;
-
-    // size in vw/vh
+    imgEl.src = `${folderPath}${encodeURIComponent(imageName)}`;
     imgEl.style.width  = `${width}vw`;
     imgEl.style.height = `${height}vh`;
 
-    // horizontal position
     const xPos = pattern.xPositions[i];
     imgEl.style.left = `${xPos}vw`;
 
-    // vertical spawn
     const spawnY = 100 + currentOffset;
     imgEl.style.top = `${spawnY}vh`;
 
     container.appendChild(imgEl);
 
-    // animate upward
     const totalDistance = spawnY + height;
     const duration      = totalDistance / scrollSpeed;
     gsap.to(imgEl, {
       y: `-=${totalDistance}vh`,
       duration,
       ease: 'linear'
-      // no onComplete remove => remains in DOM
     });
   });
 
-  // move offset for next row
   currentOffset += (maxHeight + verticalGap);
 }
 
@@ -143,15 +131,12 @@ function attachScrollFreeze(delayMs) {
   let scrollTimeout = null;
 
   window.addEventListener('scroll', () => {
-    // Pause all GSAP animations immediately
     gsap.globalTimeline.pause();
 
-    // Reset timer if user keeps scrolling
     if (scrollTimeout) {
       clearTimeout(scrollTimeout);
     }
 
-    // After [delayMs] with no scroll, resume
     scrollTimeout = setTimeout(() => {
       gsap.globalTimeline.resume();
     }, delayMs);
@@ -162,21 +147,16 @@ function attachScrollFreeze(delayMs) {
 // 7) IMAGE ZOOM ON CLICK
 //------------------------------------------------
 function attachImageZoomLogic() {
-  // Listen globally for clicks on ".floating-image"
   document.addEventListener('click', (evt) => {
     const target = evt.target;
 
-    // If we clicked a floating image, zoom
     if (target.classList.contains('floating-image')) {
       showZoom(target);
     }
   });
 
-  // Also handle clicks on the overlay => close zoom
   const overlay = document.getElementById('zoom-overlay');
   overlay.addEventListener('click', (evt) => {
-    // If user clicked the overlay or its child, only close if
-    // it's NOT the zoomed image itself. So check target vs. currentTarget.
     if (evt.target.id === 'zoom-overlay') {
       hideZoom();
     }
@@ -187,13 +167,10 @@ function showZoom(originalImg) {
   const overlay = document.getElementById('zoom-overlay');
   const zoomedImage = document.getElementById('zoomed-image');
 
-  // Clone the src from the clicked image
   zoomedImage.src = originalImg.src;
 
-  // Show overlay
   overlay.style.display = 'flex';
 
-  // Slow animation to half speed => 2x slower
   gsap.globalTimeline.timeScale(0.5);
 }
 
@@ -201,7 +178,6 @@ function hideZoom() {
   const overlay = document.getElementById('zoom-overlay');
   overlay.style.display = 'none';
 
-  // Restore normal speed
   gsap.globalTimeline.timeScale(1);
 }
 

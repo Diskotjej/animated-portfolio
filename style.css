@@ -65,15 +65,14 @@ body {
 
 /* Floating images for the collage */
 .floating-image {
-  object-fit: cover;
-  position: absolute;
-  left: 0;
-  top: 0;
-  border-radius: 3px;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-  cursor: pointer;
+.floating-image {
+  object-fit: contain; /* Ensures the entire image is visible */
+  object-position: center; /* Center-align the image within its container */
+  position: absolute; /* Keep existing positioning */
+  display: block; /* Prevent inline styling issues */
 }
 
+   
 /* Overlay for zooming a clicked image */
 #zoom-overlay {
   position: fixed;

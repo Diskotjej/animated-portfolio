@@ -1,11 +1,15 @@
 //------------------------------------------------
-// 0) FOLDER + SPECIAL SETS
+// A) CONFIG: Folder path
 //------------------------------------------------
 
 const folderPath = './images/';
 
+//------------------------------------------------
+// B) SPECIAL SETS (Sizing Rules)
+//------------------------------------------------
+
 /**
- * 1) Always Large
+ * alwaysLargeSet: these images must ALWAYS be large (60×60).
  */
 const alwaysLargeSet = new Set([
   "IMG_4474.jpg",
@@ -19,7 +23,7 @@ const alwaysLargeSet = new Set([
 ]);
 
 /**
- * 2) Always Medium
+ * alwaysMediumSet: these images must ALWAYS be medium (45×45).
  */
 const alwaysMediumSet = new Set([
   "IMG_0823.jpg",
@@ -45,32 +49,33 @@ const alwaysMediumSet = new Set([
   "IMG_1142.JPG",
   "IMG_1168.jpg",
   "IMG_1643.JPG",
-  "IMG_1197.jpg" // newly added
+
+  // newly added
+  "IMG_1197.jpg"
 ]);
 
 /**
- * 3) Never Small
+ * neverSmallSet: these images can be medium or large, but NOT small.
+ * If you don’t have any left that belong here, keep it empty.
  */
-const neverSmallSet = new Set([
-  // (If you had any that are "medium or large only" but not alwaysLarge, put them here.)
-  // If empty, that's fine.
-]);
+const neverSmallSet = new Set([]);
 
 //------------------------------------------------
-// 1) YOUR NEW ORDER
+// C) 1) YOUR CUSTOM ORDER (no duplicates if possible)
 //------------------------------------------------
 
-// The new custom order you want (no duplicates please):
 const newOrderList = [
+  // The new custom list you provided in the question
   "IMG_4474.jpg",
   "images_photo1..JPG",
-  "IMG_2568.jpg",
   "IMG_1144.JPG",
+  "IMG_1637",         // <-- Make sure "IMG_1637" actually exists with extension?
   "IMG_1197.jpg",
   "IMG_1128.JPG",
   "IMG_4619.jpg",
   "IMG_1204.jpg",
   "IMG_6419.jpg",
+  "IMG_2568.jpg",
   "IMG_1523.JPG",
   "IMG_1659.JPG",
   "IMG_6339.jpg",
@@ -82,8 +87,8 @@ const newOrderList = [
   "IMG_1133.JPG",
   "IMG_1215.jpg",
   "images_photo32.jpg",
-  "IMG_1129.JPG",   // if you have a true duplicate inside newOrderList, consider removing it
-  "IMG_1648.jpg",   // same comment
+  "IMG_1129.JPG",
+  "IMG_1648.jpg",
   "IMG_1148.JPG",
   "images_photo14.PNG",
   "IMG_1384.png",
@@ -168,21 +173,21 @@ const newOrderList = [
 ];
 
 //------------------------------------------------
-// 2) BIG LIST (All 190+ images, presumably).
+// C) 2) YOUR bigList with ALL 190+ IMAGES
 //------------------------------------------------
 const bigList = [
-  // Place your entire known set of 190+ files here
-  // ...
+  // ... put your entire (190+) filenames here ...
 ];
 
 //------------------------------------------------
-// 3) BUILD A UNIQUE FINAL ARRAY (No duplicates)
+// D) COMBINE: 1) “Ordered” + 2) leftover (alphabetical) => final array
 //------------------------------------------------
 
-const usedSet = new Set();      // track which filenames we have used
+/** 
+ * Step 1: Add your newOrderList in the exact given sequence, skipping duplicates.
+ */
+const usedSet = new Set();
 let finalArray = [];
-
-// First, add from newOrderList in order, skipping duplicates
 for (const item of newOrderList) {
   if (!usedSet.has(item)) {
     usedSet.add(item);
@@ -190,19 +195,29 @@ for (const item of newOrderList) {
   }
 }
 
-// Then, append leftover from bigList (items not yet used)
+/** 
+ * Step 2: Gather leftover items from bigList (those not in usedSet).
+ *         Sort them alphabetically so they appear in a consistent order.
+ */
+let leftover = [];
 for (const item of bigList) {
   if (!usedSet.has(item)) {
-    usedSet.add(item);
-    finalArray.push(item);
+    leftover.push(item);
   }
 }
+// Sort leftover array in alphabetical order (case-sensitive or case-insensitive).
+leftover.sort((a, b) => a.localeCompare(b));
 
-// Now `finalArray` is guaranteed unique, in your custom order plus leftover
+// Then append leftover to finalArray
+for (const item of leftover) {
+  finalArray.push(item);
+}
+
+// The final array has everything, no duplicates
 let images = finalArray;
 
 //------------------------------------------------
-// 4) DIMENSIONS
+// E) BIGGER DIMENSIONS
 //------------------------------------------------
 const sizes = {
   small:  { width: 20, height: 20 },
@@ -211,35 +226,33 @@ const sizes = {
 };
 
 //------------------------------------------------
-// 5) SIZE LOGIC
+// F) PICK SIZE PER IMAGE
 //------------------------------------------------
 function getSizeKey(filename) {
-  // Always Large
   if (alwaysLargeSet.has(filename)) {
     return "large";
   }
-  // Always Medium
   if (alwaysMediumSet.has(filename)) {
     return "medium";
   }
-  // Never Small => random medium or large
   if (neverSmallSet.has(filename)) {
+    // randomly medium or large
     const r = Math.random() * 100;
     return (r < 60) ? "medium" : "large";
   }
-  // Else => 20% small, 50% medium, 30% large
+  // default distribution
   const r = Math.random() * 100;
-  if (r < 20) return "small";
+  if      (r < 20) return "small";
   else if (r < 70) return "medium";
   else             return "large";
 }
 
 //------------------------------------------------
-// 6) NO-OVERLAP LAYOUT + SCROLL
+// G) NO-OVERLAP LAYOUT
 //------------------------------------------------
 const scrollSpeed   = 18;
 const spawnInterval = 900;
-const verticalGap   = 4; 
+const verticalGap   = 4;
 let currentOffset   = 0;
 let spawnTimer;
 
@@ -250,8 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function createRowNoOverlap() {
-  // Keep going until truly empty
   if (images.length === 0) {
+    // Done with everything
     clearInterval(spawnTimer);
     return;
   }
@@ -262,32 +275,32 @@ function createRowNoOverlap() {
   let usedWidth = 0;
   let maxHeight = 0;
 
-  // Try adding up to 3 images if they fit in ~95vw
+  // Attempt up to 3 images if they fit under ~95vw
   while (rowImages.length < 3 && images.length > 0) {
     const filename = images[0];
     const sizeKey = getSizeKey(filename);
     const { width, height } = sizes[sizeKey];
 
     if (usedWidth + width > 95) {
-      // doesn't fit => break => new row
+      // doesn't fit => start new row
       break;
     }
-    // fits => remove from images
+    // fits => remove from `images`
     images.shift();
     rowImages.push({ filename, sizeKey });
     usedWidth += width;
     if (height > maxHeight) maxHeight = height;
   }
 
-  // If no images fit, we forcibly place 1 large image anyway
+  // If no images fit, forcibly place 1 large
   if (rowImages.length === 0 && images.length > 0) {
     const filename = images.shift();
     rowImages.push({ filename, sizeKey: "large" });
-    usedWidth = sizes.large.width;
-    maxHeight = sizes.large.height;
+    usedWidth = 60;
+    maxHeight = 60;
   }
 
-  // Center horizontally
+  // Center them horizontally
   let leftSoFar = (100 - usedWidth) / 2;
 
   // Create + animate
@@ -308,7 +321,7 @@ function createRowNoOverlap() {
     imgEl.style.top = `${spawnY}vh`;
     container.appendChild(imgEl);
 
-    // animate upward
+    // Animate up
     const totalDistance = spawnY + height;
     const duration = totalDistance / scrollSpeed;
     gsap.to(imgEl, {
@@ -322,7 +335,7 @@ function createRowNoOverlap() {
 }
 
 //------------------------------------------------
-// 7) SCROLL FREEZE
+// H) SCROLL FREEZE
 //------------------------------------------------
 function attachScrollFreeze(delayMs) {
   let scrollTimeout = null;
@@ -336,7 +349,7 @@ function attachScrollFreeze(delayMs) {
 }
 
 //------------------------------------------------
-// 8) IMAGE ZOOM
+// I) IMAGE ZOOM
 //------------------------------------------------
 function attachImageZoomLogic() {
   document.addEventListener('click', (evt) => {
@@ -344,6 +357,7 @@ function attachImageZoomLogic() {
       showZoom(evt.target);
     }
   });
+
   const overlay = document.getElementById('zoom-overlay');
   overlay.addEventListener('click', (evt) => {
     if (evt.target.id === 'zoom-overlay') {

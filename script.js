@@ -70,7 +70,7 @@ let images = [
   "IMG_4474.jpg",
   "images_photo1..JPG",
   "IMG_1144.JPG",
-  "IMG_1637.JPG",
+  "IMG_1637.PNG",
   "IMG_1197.jpg",
   "IMG_1128.JPG",
   "IMG_4619.jpg",

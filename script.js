@@ -69,7 +69,7 @@ const newOrderList = [
   "IMG_4474.jpg",
   "images_photo1..JPG",
   "IMG_1144.JPG",
-  "IMG_1637.JPG",         // <-- Make sure "IMG_1637" actually exists with extension?
+  "IMG_1637.PNG",         // <-- Make sure "IMG_1637" actually exists with extension?
   "IMG_1197.jpg",
   "IMG_1128.JPG",
   "IMG_4619.jpg",

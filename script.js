@@ -29,7 +29,7 @@
   // 1) IMAGE LIST (CORRECT FILENAMES)
   //------------------------------------------------
 
-  const folderPath = './image folder/'; 
+  const folderPath = './images/'; 
   // If "image folder" truly has a space, use "%20": './image%20folder/'
   // But it's simpler to rename the folder "images" and use './images/'.
 

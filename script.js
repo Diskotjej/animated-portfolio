@@ -35,36 +35,27 @@ let imagesBackup = [...images];
 //------------------------------------------------
 
 const sizes = {
-  small:  { width: 12, height: 12 }, // Smaller size
+  small:  { width: 15, height: 15 },
   medium: { width: 30, height: 30 },
-  large:  { width: 50, height: 50 } // Slightly smaller large
+  large:  { width: 50, height: 50 }
 };
 
-// Updated patterns to include more small images
 const patterns = [
   {
     sizeKeys: ["small", "small", "small"],
     xPositions: [5, 35, 65]
   },
   {
-    sizeKeys: ["medium", "small", "small"],
-    xPositions: [5, 45, 75]
-  },
-  {
     sizeKeys: ["medium", "medium"],
     xPositions: [10, 60]
-  },
-  {
-    sizeKeys: ["small", "medium", "small"],
-    xPositions: [5, 50, 80]
   },
   {
     sizeKeys: ["large"],
     xPositions: [(100 - sizes.large.width) / 2]
   },
   {
-    sizeKeys: ["small", "medium", "medium"],
-    xPositions: [5, 40, 75]
+    sizeKeys: ["medium", "small", "small"],
+    xPositions: [5, 45, 75]
   }
 ];
 
@@ -100,7 +91,7 @@ function createRandomRow() {
 
   pattern.sizeKeys.forEach((sizeKey, i) => {
     if (images.length === 0) {
-      images = [...imagesBackup]; // Refill images when empty
+      images = [...imagesBackup]; // Refill only when all images have been shown
     }
 
     const randomIdx = Math.floor(Math.random() * images.length);
@@ -191,6 +182,8 @@ function hideZoom() {
 //------------------------------------------------
 // 8) START
 //------------------------------------------------
+document.addEventListener('DOMContentLoaded', initializeAnimation);
+
 document.addEventListener('DOMContentLoaded', initializeAnimation);
 
 

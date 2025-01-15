@@ -1,19 +1,15 @@
 //------------------------------------------------
-// A) CONFIG: Folder path
+// 0) FOLDER + SPECIAL SETS
 //------------------------------------------------
 
 const folderPath = './images/';
 
-//------------------------------------------------
-// B) SPECIAL SETS
-//------------------------------------------------
-
 /**
- * 1) Always Large: these images must always be 60×60.
+ * 1) Always Large
  */
 const alwaysLargeSet = new Set([
-  "IMG_4474.jpg",       // always large
-  "images_photo1..JPG", // always large
+  "IMG_4474.jpg",
+  "images_photo1..JPG",
   "IMG_1144.JPG",
   "IMG_1128.JPG",
   "IMG_1523.JPG",
@@ -23,10 +19,9 @@ const alwaysLargeSet = new Set([
 ]);
 
 /**
- * 2) Always Medium: these images must always be 45×45.
+ * 2) Always Medium
  */
 const alwaysMediumSet = new Set([
-  // The ones you chose before:
   "IMG_0823.jpg",
   "IMG_1219.jpg",
   "IMG_9082.jpg",
@@ -50,37 +45,34 @@ const alwaysMediumSet = new Set([
   "IMG_1142.JPG",
   "IMG_1168.jpg",
   "IMG_1643.JPG",
-
-  // Newly requested always medium:
-  "IMG_1197.jpg"
+  "IMG_1197.jpg" // newly added
 ]);
 
 /**
- * 3) Never Small: can be medium or large, but never small.
- *    If you don’t have any left to put here, leave it empty.
+ * 3) Never Small
  */
 const neverSmallSet = new Set([
-  // (If you previously had something here that is now "always large" or
-  //  "always medium," remove it from this set to avoid conflicts.)
+  // (If you had any that are "medium or large only" but not alwaysLarge, put them here.)
+  // If empty, that's fine.
 ]);
 
 //------------------------------------------------
-// C) NEW ORDER + BIG LIST
+// 1) YOUR NEW ORDER
 //------------------------------------------------
 
-// 1) The new custom order you requested
+// The new custom order you want (no duplicates please):
 const newOrderList = [
   "IMG_4474.jpg",
   "images_photo1..JPG",
   "IMG_2568.jpg",
   "IMG_1144.JPG",
-  "IMG_1197.jpg",        // alwaysMediumSet
+  "IMG_1197.jpg",
   "IMG_1128.JPG",
   "IMG_4619.jpg",
   "IMG_1204.jpg",
   "IMG_6419.jpg",
-  "IMG_1523.JPG",        // alwaysLargeSet
-  "IMG_1659.JPG",        // alwaysLargeSet
+  "IMG_1523.JPG",
+  "IMG_1659.JPG",
   "IMG_6339.jpg",
   "IMG_1137.JPG",
   "IMG_1129.JPG",
@@ -90,13 +82,13 @@ const newOrderList = [
   "IMG_1133.JPG",
   "IMG_1215.jpg",
   "images_photo32.jpg",
-  "IMG_1129.JPG",
-  "IMG_1648.jpg",
+  "IMG_1129.JPG",   // if you have a true duplicate inside newOrderList, consider removing it
+  "IMG_1648.jpg",   // same comment
   "IMG_1148.JPG",
   "images_photo14.PNG",
   "IMG_1384.png",
   "IMG_5697.JPG",
-  "IMG_1219.jpg", 
+  "IMG_1219.jpg",
   "IMG_0823.jpg",
   "IMG_1178.jpg",
   "IMG_8440.JPG",
@@ -175,24 +167,42 @@ const newOrderList = [
   "IMG_5236.JPG"
 ];
 
-// 2) The bigList with ALL images (like before)
+//------------------------------------------------
+// 2) BIG LIST (All 190+ images, presumably).
+//------------------------------------------------
 const bigList = [
-  // ... place your entire known set of filenames here ...
+  // Place your entire known set of 190+ files here
+  // ...
 ];
 
-// 3) Append leftover images not in newOrderList
-const newOrderSet = new Set(newOrderList);
-const finalArray = [...newOrderList];
-for (const item of bigList) {
-  if (!newOrderSet.has(item)) {
+//------------------------------------------------
+// 3) BUILD A UNIQUE FINAL ARRAY (No duplicates)
+//------------------------------------------------
+
+const usedSet = new Set();      // track which filenames we have used
+let finalArray = [];
+
+// First, add from newOrderList in order, skipping duplicates
+for (const item of newOrderList) {
+  if (!usedSet.has(item)) {
+    usedSet.add(item);
     finalArray.push(item);
   }
 }
 
-let images = finalArray; // This is our final array to animate
+// Then, append leftover from bigList (items not yet used)
+for (const item of bigList) {
+  if (!usedSet.has(item)) {
+    usedSet.add(item);
+    finalArray.push(item);
+  }
+}
+
+// Now `finalArray` is guaranteed unique, in your custom order plus leftover
+let images = finalArray;
 
 //------------------------------------------------
-// D) BIGGER IMAGE DIMENSIONS
+// 4) DIMENSIONS
 //------------------------------------------------
 const sizes = {
   small:  { width: 20, height: 20 },
@@ -201,36 +211,36 @@ const sizes = {
 };
 
 //------------------------------------------------
-// E) LOGIC TO PICK SIZE
+// 5) SIZE LOGIC
 //------------------------------------------------
 function getSizeKey(filename) {
-  // 1) If always large
+  // Always Large
   if (alwaysLargeSet.has(filename)) {
     return "large";
   }
-  // 2) If always medium
+  // Always Medium
   if (alwaysMediumSet.has(filename)) {
     return "medium";
   }
-  // 3) If never small => random medium/large
+  // Never Small => random medium or large
   if (neverSmallSet.has(filename)) {
     const r = Math.random() * 100;
     return (r < 60) ? "medium" : "large";
   }
-  // 4) Default distribution: 20% small, 50% medium, 30% large
+  // Else => 20% small, 50% medium, 30% large
   const r = Math.random() * 100;
-  if      (r < 20) return "small";
+  if (r < 20) return "small";
   else if (r < 70) return "medium";
   else             return "large";
 }
 
 //------------------------------------------------
-// F) NO-OVERLAP LAYOUT + ANIMATION
+// 6) NO-OVERLAP LAYOUT + SCROLL
 //------------------------------------------------
 const scrollSpeed   = 18;
 const spawnInterval = 900;
+const verticalGap   = 4; 
 let currentOffset   = 0;
-const verticalGap   = 4;
 let spawnTimer;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -240,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function createRowNoOverlap() {
+  // Keep going until truly empty
   if (images.length === 0) {
     clearInterval(spawnTimer);
     return;
@@ -251,24 +262,24 @@ function createRowNoOverlap() {
   let usedWidth = 0;
   let maxHeight = 0;
 
-  // Attempt up to 3 images if they fit in ~95vw
+  // Try adding up to 3 images if they fit in ~95vw
   while (rowImages.length < 3 && images.length > 0) {
-    const filename = images[0]; // peek
+    const filename = images[0];
     const sizeKey = getSizeKey(filename);
     const { width, height } = sizes[sizeKey];
 
     if (usedWidth + width > 95) {
-      // doesn't fit horizontally => start a new row
+      // doesn't fit => break => new row
       break;
     }
-    // it fits => shift from the array
+    // fits => remove from images
     images.shift();
     rowImages.push({ filename, sizeKey });
     usedWidth += width;
     if (height > maxHeight) maxHeight = height;
   }
 
-  // If zero images fit (maybe a large image alone?), forcibly place 1 large
+  // If no images fit, we forcibly place 1 large image anyway
   if (rowImages.length === 0 && images.length > 0) {
     const filename = images.shift();
     rowImages.push({ filename, sizeKey: "large" });
@@ -276,7 +287,7 @@ function createRowNoOverlap() {
     maxHeight = sizes.large.height;
   }
 
-  // Center them horizontally
+  // Center horizontally
   let leftSoFar = (100 - usedWidth) / 2;
 
   // Create + animate
@@ -297,6 +308,7 @@ function createRowNoOverlap() {
     imgEl.style.top = `${spawnY}vh`;
     container.appendChild(imgEl);
 
+    // animate upward
     const totalDistance = spawnY + height;
     const duration = totalDistance / scrollSpeed;
     gsap.to(imgEl, {
@@ -310,7 +322,7 @@ function createRowNoOverlap() {
 }
 
 //------------------------------------------------
-// G) SCROLL FREEZE
+// 7) SCROLL FREEZE
 //------------------------------------------------
 function attachScrollFreeze(delayMs) {
   let scrollTimeout = null;
@@ -324,7 +336,7 @@ function attachScrollFreeze(delayMs) {
 }
 
 //------------------------------------------------
-// H) IMAGE ZOOM
+// 8) IMAGE ZOOM
 //------------------------------------------------
 function attachImageZoomLogic() {
   document.addEventListener('click', (evt) => {
@@ -332,7 +344,6 @@ function attachImageZoomLogic() {
       showZoom(evt.target);
     }
   });
-
   const overlay = document.getElementById('zoom-overlay');
   overlay.addEventListener('click', (evt) => {
     if (evt.target.id === 'zoom-overlay') {
@@ -344,7 +355,6 @@ function attachImageZoomLogic() {
 function showZoom(originalImg) {
   const overlay = document.getElementById('zoom-overlay');
   const zoomedImage = document.getElementById('zoomed-image');
-
   zoomedImage.src = originalImg.src;
   overlay.style.display = 'flex';
   gsap.globalTimeline.timeScale(0.5);
@@ -355,3 +365,4 @@ function hideZoom() {
   overlay.style.display = 'none';
   gsap.globalTimeline.timeScale(1);
 }
+

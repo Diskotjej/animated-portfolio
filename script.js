@@ -91,11 +91,10 @@ function createRandomRow() {
 
   pattern.sizeKeys.forEach((sizeKey, i) => {
     if (images.length === 0) {
-      images = [...imagesBackup]; // Refill only when all images have been shown
+      images = [...imagesBackup]; // Refill after all images are shown once
     }
 
-    const randomIdx = Math.floor(Math.random() * images.length);
-    const imageName = images.splice(randomIdx, 1)[0];
+    const imageName = images.shift(); // Always use the first image in the array
 
     const { width, height } = sizes[sizeKey];
     if (height > maxHeight) {
@@ -183,7 +182,4 @@ function hideZoom() {
 // 8) START
 //------------------------------------------------
 document.addEventListener('DOMContentLoaded', initializeAnimation);
-
-document.addEventListener('DOMContentLoaded', initializeAnimation);
-
 

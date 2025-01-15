@@ -35,24 +35,29 @@ let imagesBackup = [...images];
 //------------------------------------------------
 
 const sizes = {
-  small:  { width: 25, height: 25 }, // Increased sizes
-  medium: { width: 40, height: 40 },
-  large:  { width: 65, height: 65 }
+  small:  { width: 15, height: 15 },
+  medium: { width: 30, height: 30 },
+  large:  { width: 55, height: 55 }
 };
 
+// Adjusted patterns: fewer small images, more medium and large
 const patterns = [
   {
     sizeKeys: ["large"],
-    xPositions: [ (100 - sizes.large.width) / 2 ]
+    xPositions: [ (100 - sizes.large.width) / 2 ] // Center large image
   },
   {
-    sizeKeys: ["medium", "medium"],
+    sizeKeys: ["medium", "large"],
     xPositions: [5, 55]
   },
   {
-    sizeKeys: ["small", "small", "small"],
-    xPositions: [5, 30, 55]
+    sizeKeys: ["medium", "medium", "small"],
+    xPositions: [5, 35, 70]
   },
+  {
+    sizeKeys: ["large", "medium"],
+    xPositions: [5, 60]
+  }
 ];
 
 //------------------------------------------------
@@ -62,7 +67,7 @@ const patterns = [
 const scrollSpeed = 18;
 const spawnInterval = 900;
 let currentOffset = 0;
-const verticalGap = 4;
+const verticalGap = 5;
 
 //------------------------------------------------
 // 4) INITIALIZE
@@ -101,7 +106,7 @@ function createRandomRow() {
     const imgEl = document.createElement('img');
     imgEl.classList.add('floating-image');
     imgEl.src = `${folderPath}${encodeURIComponent(imageName)}`;
-    imgEl.style.objectFit = 'cover'; // Allow slight cropping
+    imgEl.style.objectFit = 'cover';
     imgEl.style.width = `${width}vw`;
     imgEl.style.height = `${height}vh`;
 

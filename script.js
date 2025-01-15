@@ -35,28 +35,36 @@ let imagesBackup = [...images];
 //------------------------------------------------
 
 const sizes = {
-  small:  { width: 15, height: 15 },
+  small:  { width: 12, height: 12 }, // Smaller size
   medium: { width: 30, height: 30 },
-  large:  { width: 55, height: 55 }
+  large:  { width: 50, height: 50 } // Slightly smaller large
 };
 
-// Adjusted patterns: fewer small images, more medium and large
+// Updated patterns to include more small images
 const patterns = [
   {
+    sizeKeys: ["small", "small", "small"],
+    xPositions: [5, 35, 65]
+  },
+  {
+    sizeKeys: ["medium", "small", "small"],
+    xPositions: [5, 45, 75]
+  },
+  {
+    sizeKeys: ["medium", "medium"],
+    xPositions: [10, 60]
+  },
+  {
+    sizeKeys: ["small", "medium", "small"],
+    xPositions: [5, 50, 80]
+  },
+  {
     sizeKeys: ["large"],
-    xPositions: [ (100 - sizes.large.width) / 2 ] // Center large image
+    xPositions: [(100 - sizes.large.width) / 2]
   },
   {
-    sizeKeys: ["medium", "large"],
-    xPositions: [5, 55]
-  },
-  {
-    sizeKeys: ["medium", "medium", "small"],
-    xPositions: [5, 35, 70]
-  },
-  {
-    sizeKeys: ["large", "medium"],
-    xPositions: [5, 60]
+    sizeKeys: ["small", "medium", "medium"],
+    xPositions: [5, 40, 75]
   }
 ];
 
@@ -92,7 +100,7 @@ function createRandomRow() {
 
   pattern.sizeKeys.forEach((sizeKey, i) => {
     if (images.length === 0) {
-      images = [...imagesBackup];
+      images = [...imagesBackup]; // Refill images when empty
     }
 
     const randomIdx = Math.floor(Math.random() * images.length);

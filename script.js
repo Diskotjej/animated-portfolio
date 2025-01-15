@@ -28,6 +28,7 @@ let images = [
   "images_photo4(1).jpg", "images_photo4.jpg", "images_photo6.jpg", "images_photo7.jpg"
 ];
 
+// Clone of the original array for reset purposes
 let imagesBackup = [...images];
 
 //------------------------------------------------
@@ -37,25 +38,21 @@ let imagesBackup = [...images];
 const sizes = {
   small:  { width: 15, height: 15 },
   medium: { width: 30, height: 30 },
-  large:  { width: 50, height: 50 }
+  large:  { width: 55, height: 55 }
 };
 
 const patterns = [
-  {
-    sizeKeys: ["small", "small", "small"],
-    xPositions: [5, 35, 65]
-  },
-  {
-    sizeKeys: ["medium", "medium"],
-    xPositions: [10, 60]
-  },
   {
     sizeKeys: ["large"],
     xPositions: [(100 - sizes.large.width) / 2]
   },
   {
-    sizeKeys: ["medium", "small", "small"],
-    xPositions: [5, 45, 75]
+    sizeKeys: ["medium", "medium"],
+    xPositions: [5, 55]
+  },
+  {
+    sizeKeys: ["small", "small", "small"],
+    xPositions: [5, 30, 55]
   }
 ];
 
@@ -66,7 +63,7 @@ const patterns = [
 const scrollSpeed = 18;
 const spawnInterval = 900;
 let currentOffset = 0;
-const verticalGap = 5;
+const verticalGap = 4;
 
 //------------------------------------------------
 // 4) INITIALIZE
@@ -84,16 +81,16 @@ function initializeAnimation() {
 // 5) CREATE & ANIMATE A ROW
 //------------------------------------------------
 function createRandomRow() {
+  if (images.length === 0) {
+    images = [...imagesBackup]; // Refill after all images are shown once
+  }
+
   const pattern = patterns[Math.floor(Math.random() * patterns.length)];
   const container = document.getElementById('floating-container');
 
   let maxHeight = 0;
 
   pattern.sizeKeys.forEach((sizeKey, i) => {
-    if (images.length === 0) {
-      images = [...imagesBackup]; // Refill after all images are shown once
-    }
-
     const imageName = images.shift(); // Always use the first image in the array
 
     const { width, height } = sizes[sizeKey];

@@ -1,49 +1,34 @@
 //------------------------------------------------
-// A) CONFIG: Folder path, sets, bigList, etc.
+// A) CONFIG: Folder path
 //------------------------------------------------
 
-// The folder for images (same level as index.html)
 const folderPath = './images/';
 
+//------------------------------------------------
+// B) SPECIAL SETS
+//------------------------------------------------
+
 /**
- * This set contains filenames that should NEVER be "small".
- * They can be medium or large.
+ * 1) Always Large: these images must always be 60×60.
  */
-const neverSmallSet = new Set([
-  "IMG_4474.jpg",
-  "images_photo1..JPG",
-  "IMG_1129.JPG",
-  "IMG_1128.JPG",
-  "IMG_0745.JPG",
+const alwaysLargeSet = new Set([
+  "IMG_4474.jpg",       // always large
+  "images_photo1..JPG", // always large
   "IMG_1144.JPG",
-  "IMG_0354.JPG",
-  "IMG_1160.jpg",
-  "IMG_1197.jpg",
-  "IMG_1133.JPG",
-  "IMG_8440.JPG",
-  "IMG_1178.jpg",
-  "images_photo35.jpg",
-  "IMG_6419.jpg",
-  "IMG_1224.PNG",
-  "IMG_0832.jpg",
-  "IMG_4619.jpg",
-  "IMG_4496.jpg",
-  "IMG_1213.jpg",
-  "images_photo30.jpg",
-  "IMG_1130.JPG",
-  "IMG_6339.jpg",
-  "IMG_4440.jpg",
-  "IMG_6337.jpg",
-  "IMG_4440.jpg"  // repeated? We'll leave it
+  "IMG_1128.JPG",
+  "IMG_1523.JPG",
+  "IMG_1659.JPG",
+  "IMG_1137.JPG",
+  "IMG_4619.jpg"
 ]);
 
 /**
- * This set contains filenames that should ALWAYS be "medium".
+ * 2) Always Medium: these images must always be 45×45.
  */
 const alwaysMediumSet = new Set([
+  // The ones you chose before:
   "IMG_0823.jpg",
   "IMG_1219.jpg",
-  "IMG_0823.jpg", // repeated?
   "IMG_9082.jpg",
   "IMG_6174.jpeg",
   "IMG_2578__29-04-2019-02-35-30.jpg",
@@ -64,32 +49,44 @@ const alwaysMediumSet = new Set([
   "IMG_1220.PNG",
   "IMG_1142.JPG",
   "IMG_1168.jpg",
-  "IMG_1643.JPG"
+  "IMG_1643.JPG",
+
+  // Newly requested always medium:
+  "IMG_1197.jpg"
 ]);
 
+/**
+ * 3) Never Small: can be medium or large, but never small.
+ *    If you don’t have any left to put here, leave it empty.
+ */
+const neverSmallSet = new Set([
+  // (If you previously had something here that is now "always large" or
+  //  "always medium," remove it from this set to avoid conflicts.)
+]);
 
 //------------------------------------------------
-// 1) YOUR NEW CUSTOM ORDER
-//    (We’ll call it `newOrderList`)
+// C) NEW ORDER + BIG LIST
 //------------------------------------------------
+
+// 1) The new custom order you requested
 const newOrderList = [
   "IMG_4474.jpg",
   "images_photo1..JPG",
   "IMG_2568.jpg",
   "IMG_1144.JPG",
-  "IMG_6419.jpg",
+  "IMG_1197.jpg",        // alwaysMediumSet
   "IMG_1128.JPG",
-  "IMG_1523.JPG",
-  "IMG_1659.JPG",
+  "IMG_4619.jpg",
+  "IMG_1204.jpg",
+  "IMG_6419.jpg",
+  "IMG_1523.JPG",        // alwaysLargeSet
+  "IMG_1659.JPG",        // alwaysLargeSet
   "IMG_6339.jpg",
   "IMG_1137.JPG",
   "IMG_1129.JPG",
-  "IMG_4619.jpg",
   "IMG_0745.JPG",
-  "IMG_1204.jpg",
   "IMG_1648.jpg",
   "IMG_1160.jpg",
-  "IMG_1197.jpg",
   "IMG_1133.JPG",
   "IMG_1215.jpg",
   "images_photo32.jpg",
@@ -99,7 +96,7 @@ const newOrderList = [
   "images_photo14.PNG",
   "IMG_1384.png",
   "IMG_5697.JPG",
-  "IMG_1219.jpg",
+  "IMG_1219.jpg", 
   "IMG_0823.jpg",
   "IMG_1178.jpg",
   "IMG_8440.JPG",
@@ -178,19 +175,12 @@ const newOrderList = [
   "IMG_5236.JPG"
 ];
 
-//------------------------------------------------
-// 2) THE FULL "bigList" OF ALL IMAGES
-//    (So we can append any that aren’t in newOrderList.)
-//    If you already have this from previous code, reuse it.
-//------------------------------------------------
+// 2) The bigList with ALL images (like before)
 const bigList = [
-  // ... (same large list from before, containing ALL possible images) ...
-  // For brevity, I'm not re-pasting the entire list here.
+  // ... place your entire known set of filenames here ...
 ];
 
-//------------------------------------------------
-// 3) APPEND ANY "NOT-YET-USED" FILES
-//------------------------------------------------
+// 3) Append leftover images not in newOrderList
 const newOrderSet = new Set(newOrderList);
 const finalArray = [...newOrderList];
 for (const item of bigList) {
@@ -199,11 +189,10 @@ for (const item of bigList) {
   }
 }
 
-// This final array is what we’ll animate
-let images = finalArray;
+let images = finalArray; // This is our final array to animate
 
 //------------------------------------------------
-// 4) BIGGER SIZES
+// D) BIGGER IMAGE DIMENSIONS
 //------------------------------------------------
 const sizes = {
   small:  { width: 20, height: 20 },
@@ -212,18 +201,23 @@ const sizes = {
 };
 
 //------------------------------------------------
-// 5) PICKING SIZE PER IMAGE
+// E) LOGIC TO PICK SIZE
 //------------------------------------------------
 function getSizeKey(filename) {
-  if (alwaysMediumSet.has(filename)) {
-    return "medium"; 
+  // 1) If always large
+  if (alwaysLargeSet.has(filename)) {
+    return "large";
   }
+  // 2) If always medium
+  if (alwaysMediumSet.has(filename)) {
+    return "medium";
+  }
+  // 3) If never small => random medium/large
   if (neverSmallSet.has(filename)) {
-    // randomly medium or large (e.g. 60% medium, 40% large)
     const r = Math.random() * 100;
     return (r < 60) ? "medium" : "large";
   }
-  // Otherwise: 20% small, 50% medium, 30% large
+  // 4) Default distribution: 20% small, 50% medium, 30% large
   const r = Math.random() * 100;
   if      (r < 20) return "small";
   else if (r < 70) return "medium";
@@ -231,12 +225,12 @@ function getSizeKey(filename) {
 }
 
 //------------------------------------------------
-// 6) ANIMATION + NO-OVERLAP LAYOUT
+// F) NO-OVERLAP LAYOUT + ANIMATION
 //------------------------------------------------
 const scrollSpeed   = 18;
 const spawnInterval = 900;
-const verticalGap   = 4;
 let currentOffset   = 0;
+const verticalGap   = 4;
 let spawnTimer;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -252,41 +246,40 @@ function createRowNoOverlap() {
   }
 
   const container = document.getElementById('floating-container');
-  
+
   let rowImages = [];
   let usedWidth = 0;
   let maxHeight = 0;
 
-  // Attempt up to 3 images in this row (or fewer if they don't fit)
+  // Attempt up to 3 images if they fit in ~95vw
   while (rowImages.length < 3 && images.length > 0) {
-    const filename = images[0];
+    const filename = images[0]; // peek
     const sizeKey = getSizeKey(filename);
     const { width, height } = sizes[sizeKey];
 
     if (usedWidth + width > 95) {
-      // won't fit horizontally (staying under ~95vw)
+      // doesn't fit horizontally => start a new row
       break;
     }
-    // If it fits, shift it from images
+    // it fits => shift from the array
     images.shift();
     rowImages.push({ filename, sizeKey });
     usedWidth += width;
     if (height > maxHeight) maxHeight = height;
   }
 
-  // If no images fit (maybe the first one is too wide?), 
-  // forcibly place 1 large image in this row:
+  // If zero images fit (maybe a large image alone?), forcibly place 1 large
   if (rowImages.length === 0 && images.length > 0) {
     const filename = images.shift();
     rowImages.push({ filename, sizeKey: "large" });
-    usedWidth = 60; 
-    maxHeight = 60;
+    usedWidth = sizes.large.width;
+    maxHeight = sizes.large.height;
   }
 
   // Center them horizontally
   let leftSoFar = (100 - usedWidth) / 2;
 
-  // Create + animate each image
+  // Create + animate
   for (const item of rowImages) {
     const { width, height } = sizes[item.sizeKey];
 
@@ -296,8 +289,8 @@ function createRowNoOverlap() {
 
     imgEl.style.width  = `${width}vw`;
     imgEl.style.height = `${height}vh`;
+    imgEl.style.left   = `${leftSoFar}vw`;
 
-    imgEl.style.left = `${leftSoFar}vw`;
     leftSoFar += width;
 
     const spawnY = 100 + currentOffset;
@@ -317,7 +310,7 @@ function createRowNoOverlap() {
 }
 
 //------------------------------------------------
-// 7) SCROLL FREEZE
+// G) SCROLL FREEZE
 //------------------------------------------------
 function attachScrollFreeze(delayMs) {
   let scrollTimeout = null;
@@ -331,7 +324,7 @@ function attachScrollFreeze(delayMs) {
 }
 
 //------------------------------------------------
-// 8) IMAGE ZOOM
+// H) IMAGE ZOOM
 //------------------------------------------------
 function attachImageZoomLogic() {
   document.addEventListener('click', (evt) => {
@@ -339,6 +332,7 @@ function attachImageZoomLogic() {
       showZoom(evt.target);
     }
   });
+
   const overlay = document.getElementById('zoom-overlay');
   overlay.addEventListener('click', (evt) => {
     if (evt.target.id === 'zoom-overlay') {
@@ -348,7 +342,7 @@ function attachImageZoomLogic() {
 }
 
 function showZoom(originalImg) {
-  const overlay     = document.getElementById('zoom-overlay');
+  const overlay = document.getElementById('zoom-overlay');
   const zoomedImage = document.getElementById('zoomed-image');
 
   zoomedImage.src = originalImg.src;
@@ -361,4 +355,3 @@ function hideZoom() {
   overlay.style.display = 'none';
   gsap.globalTimeline.timeScale(1);
 }
-

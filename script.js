@@ -217,7 +217,6 @@ let images = [
   "IMG_1300.PNG",
   "IMG_1525.JPG",
   "IMG_1617.JPG",
-  "IMG_1637.PNG",      // note there's also an "IMG_1637.JPG" above 
   "IMG_1681.jpg",
   "IMG_1682.jpg",
   "IMG_1685.jpg",
